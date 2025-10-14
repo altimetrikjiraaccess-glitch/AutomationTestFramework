@@ -29,10 +29,22 @@ public class ConfigLoader {
     }
 
     public String getBaseUrl() {
-        String baseUrl = properties.getProperty("base.url");
-        if (baseUrl == null || baseUrl.isEmpty()) {
-            throw new IllegalStateException("Base URL is not defined in configuration");
+        return getRequiredProperty("base.url");
+    }
+
+    public String getSalesforceUsername() {
+        return getRequiredProperty("salesforce.username");
+    }
+
+    public String getSalesforcePassword() {
+        return getRequiredProperty("salesforce.password");
+    }
+
+    private String getRequiredProperty(String key) {
+        String value = properties.getProperty(key);
+        if (value == null || value.isEmpty()) {
+            throw new IllegalStateException("Property '" + key + "' is not defined in configuration");
         }
-        return baseUrl;
+        return value;
     }
 }
