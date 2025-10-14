@@ -48,6 +48,7 @@
 		  <systemPropertyVariables>
                         <headless>${headless}</headless>
                     </systemPropertyVariables>
+                    <groups>${suite}</groups>
                     <suiteXmlFiles>
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
