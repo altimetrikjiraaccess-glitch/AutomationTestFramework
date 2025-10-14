@@ -23,3 +23,9 @@ mvn clean test
 ```
 
 You can override configuration values such as browser type or headless mode by updating `src/main/resources/config.properties` or by supplying system properties at runtime.
+
+For example, to execute the smoke suite in headless mode, run:
+
+```bash
+mvn clean test -Dsuite=smoke -Dheadless=true
+```
