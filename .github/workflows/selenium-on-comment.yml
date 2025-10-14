@@ -1,0 +1,68 @@
+name: Selenium on comment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  run-selenium:
+    if: contains(github.event.comment.body, '/run-tests')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse args
+        id: args
+        run: |
+          BODY="${{ github.event.comment.body }}"
+          suite=$(echo "$BODY" | sed -n 's/.*suite=\([^ ]*\).*/\1/p')
+          [ -z "$suite" ] && suite="all"
+          headless=$(echo "$BODY" | sed -n 's/.*headless=\([^ ]*\).*/\1/p')
+          [ -z "$headless" ] && headless="true"
+          echo "suite=$suite" >> $GITHUB_OUTPUT
+          echo "headless=$headless" >> $GITHUB_OUTPUT
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'maven'
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Verify Chrome
+        run: |
+          google-chrome --version || chromium --version || true
+
+      - name: Run tests (Maven)
+        env:
+          HEADLESS: ${{ steps.args.outputs.headless }}
+          SUITE: ${{ steps.args.outputs.suite }}
+        run: |
+          # Common Maven patterns—pick the one your framework expects
+          # Example 1: run full test set headless
+          mvn -B -Dheadless=${HEADLESS} test
+
+          # Example 2: run a TestNG suite file from /suites
+          # mvn -B -Dsurefire.suiteXmlFiles=suites/${SUITE}.xml -Dheadless=${HEADLESS} test
+
+          # Example 3: run a JUnit tag group
+          # mvn -B -Dgroups=${SUITE} -Dheadless=${HEADLESS} test
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/cucumber-reports/**
+            **/target/extent-reports/**
