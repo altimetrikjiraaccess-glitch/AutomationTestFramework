@@ -1,0 +1,47 @@
+name: Selenium (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Suite name (e.g., smoke, regression)"
+        required: false
+        default: "all"
+      headless:
+        description: "Run in headless mode?"
+        required: false
+        default: "true"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'maven'
+
+      - uses: browser-actions/setup-chrome@v1
+
+      - name: Run tests
+        env:
+          HEADLESS: ${{ github.event.inputs.headless }}
+          SUITE: ${{ github.event.inputs.suite }}
+        run: |
+          mvn -B -Dheadless=${HEADLESS} test
+          # or:
+          # mvn -B -Dsurefire.suiteXmlFiles=suites/${SUITE}.xml -Dheadless=${HEADLESS} test
+          # mvn -B -Dgroups=${SUITE} -Dheadless=${HEADLESS} test
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/target/surefire-reports/**
+            **/target/cucumber-reports/**
+            **/target/extent-reports/**
