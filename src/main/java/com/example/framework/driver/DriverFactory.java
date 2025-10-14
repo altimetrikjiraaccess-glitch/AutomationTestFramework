@@ -21,7 +21,11 @@ public class DriverFactory {
             options.addArguments("--disable-gpu");
             options.addArguments("--no-sandbox");
             options.addArguments("--remote-allow-origins=*");
-            options.addArguments("--headless=new");
+
+            boolean headless = Boolean.parseBoolean(System.getProperty("headless", "true"));
+            if (headless) {
+                options.addArguments("--headless=new");
+            }
             DRIVER.set(new ChromeDriver(options));
         }
     }

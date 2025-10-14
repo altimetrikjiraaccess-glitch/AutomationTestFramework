@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 
 public class SalesforceLoginTest extends BaseTest {
 
-    @Test(description = "Launches Salesforce org and verifies login is successful")
+    @Test(description = "Launches Salesforce org and verifies login is successful", groups = {"smoke"})
     public void verifySalesforceLogin() {
         SalesforceLoginPage salesforceLoginPage = new SalesforceLoginPage();
         salesforceLoginPage.open(baseUrl);
