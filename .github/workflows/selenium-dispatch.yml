@@ -10,7 +10,7 @@ on:
       headless:
         description: "Run in headless mode?"
         required: false
-        default: "true"
+        default: "false"   # default to non-headless
 
 jobs:
   run:
@@ -26,24 +26,49 @@ jobs:
 
       - uses: browser-actions/setup-chrome@v1
 
+      # NEW: ensure a display exists for headful runs
+      - name: Ensure Xvfb
+        run: |
+          if ! command -v xvfb-run >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y xvfb
+          fi
+
+      # UPDATED: run headful via Xvfb when HEADLESS=false
       - name: Run tests
         env:
           HEADLESS: ${{ github.event.inputs.headless }}
           SUITE: ${{ github.event.inputs.suite }}
         run: |
-          mvn -B -Dheadless=${HEADLESS} test
-          # or:
-          # mvn -B -Dsurefire.suiteXmlFiles=suites/${SUITE}.xml -Dheadless=${HEADLESS} test
-          # mvn -B -Dgroups=${SUITE} -Dheadless=${HEADLESS} test
+          if [ "${HEADLESS}" = "false" ]; then
+            echo "Running HEADFUL via Xvfb…"
+            xvfb-run -a mvn -B -Dheadless=false test
+            # examples:
+            # xvfb-run -a mvn -B -Dsurefire.suiteXmlFiles=suites/${SUITE}.xml -Dheadless=false test
+            # xvfb-run -a mvn -B -Dgroups=${SUITE} -Dheadless=false test
+          else
+            echo "Running HEADLESS…"
+            mvn -B -Dheadless=true test
+            # mvn -B -Dsurefire.suiteXmlFiles=suites/${SUITE}.xml -Dheadless=true test
+            # mvn -B -Dgroups=${SUITE} -Dheadless=true test
+          fi
+
+      # OPTIONAL: quick debug so you can see where reports are
+      - name: List report dirs
+        if: always()
+        run: |
+          echo "workspace=$GITHUB_WORKSPACE"
+          find . -type d -name surefire-reports -print
+          find . -type d -name failsafe-reports -print
 
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
+          if-no-files-found: warn
           path: |
-            ${{ github.workspace }}/target/surefire-reports/**
-            ${{ github.workspace }}/**/target/surefire-reports/**   # for multi-module
-            ${{ github.workspace }}/**/target/failsafe-reports/**    # if you use Failsafe
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**
             **/target/cucumber-reports/**
             **/target/extent-reports/**
