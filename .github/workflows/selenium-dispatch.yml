@@ -42,6 +42,8 @@ jobs:
         with:
           name: test-reports
           path: |
-            **/target/surefire-reports/**
+            ${{ github.workspace }}/target/surefire-reports/**
+            ${{ github.workspace }}/**/target/surefire-reports/**   # for multi-module
+            ${{ github.workspace }}/**/target/failsafe-reports/**    # if you use Failsafe
             **/target/cucumber-reports/**
             **/target/extent-reports/**
