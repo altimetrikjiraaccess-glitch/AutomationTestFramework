@@ -40,10 +40,30 @@ public class ConfigLoader {
         return getRequiredProperty("salesforce.password");
     }
 
+    public String getJiraBaseUrl() {
+        return getOptionalProperty("jira.base.url");
+    }
+
+    public String getJiraUsername() {
+        return getOptionalProperty("jira.username");
+    }
+
+    public String getJiraApiToken() {
+        return getOptionalProperty("jira.api.token");
+    }
+
     private String getRequiredProperty(String key) {
         String value = properties.getProperty(key);
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException("Property '" + key + "' is not defined in configuration");
+        }
+        return value;
+    }
+
+    private String getOptionalProperty(String key) {
+        String value = properties.getProperty(key);
+        if (value == null || value.isBlank()) {
+            return null;
         }
         return value;
     }
