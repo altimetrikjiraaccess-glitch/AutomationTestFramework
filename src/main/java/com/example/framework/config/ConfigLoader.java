@@ -41,15 +41,15 @@ public class ConfigLoader {
     }
 
     public String getJiraBaseUrl() {
-        return getOptionalProperty("jira.base.url");
+        return getOptionalProperty("jira.base.url", "JIRA_BASE_URL");
     }
 
     public String getJiraUsername() {
-        return getOptionalProperty("jira.username");
+        return getOptionalProperty("jira.username", "JIRA_USERNAME");
     }
 
     public String getJiraApiToken() {
-        return getOptionalProperty("jira.api.token");
+        return getOptionalProperty("jira.api.token", "JIRA_API_TOKEN");
     }
 
     private String getRequiredProperty(String key) {
@@ -60,11 +60,29 @@ public class ConfigLoader {
         return value;
     }
 
-    private String getOptionalProperty(String key) {
-        String value = properties.getProperty(key);
+    private String getOptionalProperty(String key, String environmentVariable) {
+        String value = resolvePlaceholder(properties.getProperty(key));
+        if (value == null || value.isBlank()) {
+            value = System.getenv(environmentVariable);
+        }
         if (value == null || value.isBlank()) {
             return null;
         }
         return value;
+    }
+
+    private String resolvePlaceholder(String rawValue) {
+        if (rawValue == null) {
+            return null;
+        }
+        String trimmed = rawValue.trim();
+        if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
+            String placeholder = trimmed.substring(2, trimmed.length() - 1);
+            if (!placeholder.isBlank()) {
+                return System.getenv(placeholder);
+            }
+            return null;
+        }
+        return trimmed;
     }
 }
