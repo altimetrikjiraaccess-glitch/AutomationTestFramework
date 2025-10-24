@@ -2,6 +2,8 @@ package com.example.framework.tests;
 
 import com.example.framework.config.ConfigLoader;
 import com.example.framework.driver.DriverFactory;
+import com.example.framework.reporting.JiraReporter;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -16,7 +18,11 @@ public abstract class BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown() {
-        DriverFactory.quitDriver();
+    public void tearDown(ITestResult result) {
+        try {
+            JiraReporter.reportResult(result);
+        } finally {
+            DriverFactory.quitDriver();
+        }
     }
 }
