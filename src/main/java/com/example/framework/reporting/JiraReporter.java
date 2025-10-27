@@ -2,6 +2,8 @@ package com.example.framework.reporting;
 
 import com.example.framework.config.ConfigLoader;
 import java.lang.reflect.Method;
+import org.testng.*;
+
 import org.testng.ITestResult;
 
 public final class JiraReporter {
