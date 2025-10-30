@@ -32,7 +32,7 @@ public class SalesforceLoginPage extends BasePage {
     }
 
     public boolean isAppLauncherVisible() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(300));
         WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
         return appLauncherButton.isDisplayed();
     }
