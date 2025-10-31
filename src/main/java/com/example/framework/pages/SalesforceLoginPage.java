@@ -33,9 +33,9 @@ public class SalesforceLoginPage extends BasePage {
         wait.until(ExpectedConditions.elementToBeClickable(LOGIN_BUTTON)).click();
     }   
 
-    public boolean isAppLauncherVisible() {
+    public void isAppLauncherVisible() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
-        WebElement box = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(box));
         box.sendKeys("Codex");
         box.sendKeys(Keys.ENTER);
 /*      WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
