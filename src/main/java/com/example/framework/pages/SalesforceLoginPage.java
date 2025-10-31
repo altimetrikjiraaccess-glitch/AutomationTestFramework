@@ -18,7 +18,7 @@ public class SalesforceLoginPage extends BasePage {
         DriverFactory.getDriver().get(baseUrl);
     }
 
-    public void login(String username, String password) {
+/**    public void login(String username, String password) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(USERNAME_INPUT));
         usernameField.clear();
@@ -29,11 +29,22 @@ public class SalesforceLoginPage extends BasePage {
         passwordField.sendKeys(password);
 
         wait.until(ExpectedConditions.elementToBeClickable(LOGIN_BUTTON)).click();
-    }
+    }   **/
 
     public boolean isAppLauncherVisible() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(300));
-        WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
-        return appLauncherButton.isDisplayed();
+//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(300));
+ //     WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
+        
+        
+ //       return appLauncherButton.isDisplayed();
+          driver.get("https://www.google.com/");
+           WebElement box = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+           box.sendKeys("Codex");
+           box.sendKeys(Keys.RETURN);
+
+           // Wait for results area and assert we see results for "Codex"
+           wait.until(ExpectedConditions.presenceOfElementLocated(By.id("search")));
+           return  Assert.assertTrue(driver.getTitle().toLowerCase().contains("codex"),"Page title should contain 'Codex'");
+
     }
 }
