@@ -13,9 +13,11 @@ public class SalesforceLoginPage extends BasePage {
     private static final By PASSWORD_INPUT = By.id("password");
     private static final By LOGIN_BUTTON = By.id("Login");
     private static final By APP_LAUNCHER_BUTTON = By.cssSelector("button[title='App Launcher']");
+    private static final By BOX = By.name("q");
 
     public void open(String baseUrl) {
-        DriverFactory.getDriver().get(baseUrl);
+   //   DriverFactory.getDriver().get(baseUrl);
+        DriverFactory.getDriver().get("https://www.google.com/");      
     }
 
     public void login(String username, String password) {
@@ -32,8 +34,11 @@ public class SalesforceLoginPage extends BasePage {
     }   
 
     public boolean isAppLauncherVisible() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(300));
-        WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
-        return appLauncherButton.isDisplayed();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        WebElement box = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        box.sendKeys("Codex");
+        box.sendKeys(Keys.ENTER);
+/*      WebElement appLauncherButton = wait.until(ExpectedConditions.visibilityOfElementLocated(APP_LAUNCHER_BUTTON));
+        return appLauncherButton.isDisplayed();  */
     }
 }
