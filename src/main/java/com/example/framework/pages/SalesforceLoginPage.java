@@ -38,6 +38,7 @@ public class SalesforceLoginPage extends BasePage {
         
  //       return appLauncherButton.isDisplayed();
           driver.get("https://www.google.com/");
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
            WebElement box = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
            box.sendKeys("Codex");
            box.sendKeys(Keys.RETURN);
