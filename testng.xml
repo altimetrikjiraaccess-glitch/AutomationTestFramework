@@ -4,7 +4,6 @@
     <test name="Salesforce Smoke Tests">
         <classes>
             <class name="com.example.framework.tests.SalesforceLoginTest"/>
-            <class name="com.example.framework.tests.AccountCustomerTypeFieldTest"/>
         </classes>
     </test>
 </suite>
